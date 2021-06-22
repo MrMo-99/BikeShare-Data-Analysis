@@ -1,12 +1,12 @@
 
-/*                                     Bike Share Data Analysis
+/*                                                                         Bike Share Data Analysis
 
-     Skills Used: Union, Joins, Temp Tables, Aggregate Functions, Converting Data Types, Extracting Date and Time
-                  Update, Alter Table, Create Table, Insert Into                                                       
+                                    Skills Used: Union, Joins, Temp Tables, Aggregate Functions, Converting Data Types, Extracting Date and Time
+                                                            Update, Alter Table, Create Table, Insert Into                                                       
 */
 
 
--- Creating a table to merge 13 datasets into one table for better usability
+                                             -- Creating a table to merge 13 datasets into one table for better usability
 
 
 CREATE TABLE all_data_202004_202104 (
@@ -21,7 +21,7 @@ end_lng float,
 member_casual nvarchar(50) )
 
 
--- Insert the information from 13 tables to one table using UNION
+                                                 -- Insert the information from 13 tables to one table using UNION
 
 
 INSERT INTO [dbo].[all_data_202004_202104] (ride_id, rideable_type, started_at, ended_at, start_lat, start_lng, end_lat, end_lng, member_casual)
@@ -65,7 +65,7 @@ UNION ALL
 From CaseStudyBikeShare.dbo.[202104-divvy-tripdata])
 
 
--- Forgot to include station names, So added a new column and used JOIN to include the station names, using ride_id as key
+                             -- Forgot to include station names, So added a new column and used JOIN to include the station names, using ride_id as key
 
 
 ALTER TABLE [dbo].[all_data_202004_202104]
@@ -122,3 +122,5 @@ From [CaseStudyBikeShare].[dbo].[202103-divvy-tripdata] twe INNER JOIN [dbo].[al
 UPDATE [dbo].[all_data_202004_202104]
 SET start_station_name = thr.start_station_name 
 From [CaseStudyBikeShare].[dbo].[202104-divvy-tripdata] thr INNER JOIN [dbo].[all_data_202004_202104] org ON org.ride_id = thr.ride_id
+
+
