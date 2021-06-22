@@ -1,14 +1,14 @@
 
-/*                                        Continued..... 
-                                      Bike Share Data Analysis
+/*                                                                         Continued..... 
+                                                                     Bike Share Data Analysis
 
-     Skills Used: Union, Joins, Temp Tables, Aggregate Functions, Converting Data Types, Extracting Date and Time
-                  Update, Alter Table, Create Table, Insert Into      
+                                Skills Used: Union, Joins, Temp Tables, Aggregate Functions, Converting Data Types, Extracting Date and Time
+                                                         Update, Alter Table, Create Table, Insert Into      
 				  
 */
 
 
--- Adding a new column to calculate the ride length from datetime2
+                                         -- Adding a new column to calculate the ride length from datetime2
 
 ALTER TABLE [dbo].[all_data_202004_202104]
 ADD ride_length int
@@ -45,7 +45,7 @@ UPDATE [dbo].[all_data_202004_202104]             -- Casting datetime2 format to
 SET date_yyyy_mm_dd = CAST(started_at AS date)
 
 
--- Deleted rows where (NULL values), (ride length = 0), (ride length < 0), (ride_length > 1440 mins) for accurate analysis
+                            -- Deleted rows where (NULL values), (ride length = 0), (ride length < 0), (ride_length > 1440 mins) for accurate analysis
 
 
 DELETE FROM [dbo].[all_data_202004_202104]
@@ -86,7 +86,7 @@ From [dbo].[all_data_202004_202104]
 Group BY member_casual
 
 
--- Creating temporary tables exclusively for Casual Users and Members
+                                                 -- Creating temporary tables exclusively for Casual Users and Members
 
 
 CREATE TABLE #member_table (
@@ -124,7 +124,7 @@ Select *
 From #member_table
 
 
--- Calculating User Traffic Every Month Since Startup
+                                                          -- Calculating User Traffic Every Month Since Startup
 
 
 Select month_int AS Month_Num,
@@ -138,7 +138,7 @@ Group BY year_y, month_int, month_m
 ORDER BY year_y, month_int, month_m
 
 
--- Calculating Daily Traffic Since Startup 
+                                                           -- Calculating Daily Traffic Since Startup 
 
 
 Select 
@@ -151,7 +151,7 @@ Group BY date_yyyy_mm_dd
 ORDER BY date_yyyy_mm_dd
 
 
--- Calculating User Traffic Hour Wise
+                                                          -- Calculating User Traffic Hour Wise
 
 
 Alter Table [dbo].[all_data_202004_202104]
@@ -170,7 +170,7 @@ Group By Hour_Of_Day
 Order By Hour_Of_Day
 
 
---Calculating Most Popular Stations for Casual Users, (limiting results to top 20 station)
+                                             --Calculating Most Popular Stations for Casual Users, (limiting results to top 20 station)
 
 
 Select
@@ -179,6 +179,10 @@ Count(case when member_casual = 'casual' then 1 else NULL END) AS num_of_casual
 From [dbo].[all_data_202004_202104]
 Group By start_station_name
 Order By num_of_casual DESC
+
+
+
+
 
 
 
