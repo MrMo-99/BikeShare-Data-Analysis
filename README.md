@@ -2,6 +2,7 @@
 #### Author: Mohammed Amja
 #### Date: 23/06/2021
 
+*Note: Please refer to the files in this repository to find all of the data/code/graphs/tables found in this report and much more.*
 ___
 
 ## Introduction
@@ -99,8 +100,8 @@ From CaseStudyBikeShare.dbo.[202104-divvy-tripdata])
 ```
 
 ```TSQL
- -- Forgot to include station names, So added a new column and used JOIN to include the station names,
-    using ride_id as key
+ /* Forgot to include station names, So added a new column and used JOIN to include the station names,
+    using ride_id as key */
 
 
 ALTER TABLE [dbo].[all_data_202004_202104]
@@ -173,8 +174,305 @@ INNER JOIN [dbo].[all_data_202004_202104] org ON org.ride_id = thr.ride_id
 
 ```
 
+___
 
-## Processing and Analysis of Data
+
+## Processing of Data
+
+Here, I will be transforming and organizing data by adding new columns, extracting information and removing bad data and duplicates.
+
+```TSQL
+ -- Adding a new column to calculate the ride length from datetime2
+
+ALTER TABLE [dbo].[all_data_202004_202104]
+ADD ride_length int
+
+UPDATE [dbo].[all_data_202004_202104]
+SET ride_length = DATEDIFF(MINUTE, started_at, ended_at)
+
+
+-- Extracting month and year from datetime2 format and adding them as new columns
+
+
+ALTER TABLE [dbo].[all_data_202004_202104]
+ADD day_of_week nvarchar(50),
+month_m nvarchar(50),
+year_y nvarchar(50)
+
+UPDATE [dbo].[all_data_202004_202104]
+SET day_of_week = DATENAME(WEEKDAY, started_at),
+month_m = DATENAME(MONTH, started_at),
+year_y = year(started_at)
+
+
+ALTER TABLE [dbo].[all_data_202004_202104]       
+ADD month_int int
+
+UPDATE [dbo].[all_data_202004_202104]             -- Extracting month num from datetime2 format
+SET month_int = DATEPART(MONTH, started_at)
+
+
+ALTER TABLE [dbo].[all_data_202004_202104]       
+ADD date_yyyy_mm_dd date
+
+UPDATE [dbo].[all_data_202004_202104]             -- Casting datetime2 format to date
+SET date_yyyy_mm_dd = CAST(started_at AS date)
+```
+
+
+
+**In order to get accurate analysis, validate and make sure the dataset does not include any bias, incorrect data, and duplicates.**
+
+
+
+```TSQL
+
+-- Deleted rows where (NULL values), (ride length = 0), (ride length < 0), (ride_length > 1440 mins) for accurate analysis
+
+
+DELETE FROM [dbo].[all_data_202004_202104]
+Where ride_id IS NULL OR
+start_station_name IS NULL OR
+ride_length IS NULL OR
+ride_length = 0 OR
+ride_length < 0 OR
+ride_length > 1440
+
+
+-- Checking for any duplicates by checking count
+
+Select Count(DISTINCT(ride_id)) AS uniq,
+Count(ride_id) AS total
+From [dbo].[all_data_202004_202104]
+
+```
+
+___
+
+
+## Analyzing Data
+
+Here, I will be calculating fields and creating multiple queries to help find trends and patterns to better analyze the data and find what story the data has to offer.
+
+
+```TSQL
+-- Calculating Number of Riders Each Day by User Type and Creating View to store date for Further Visualization 
+
+
+Create View users_per_day AS
+Select 
+Count(case when member_casual = 'member' then 1 else NULL END) AS num_of_members,
+Count(case when member_casual = 'casual' then 1 else NULL END) AS num_of_casual,
+Count(*) AS num_of_users,
+day_of_week
+From [dbo].[all_data_202004_202104]
+Group BY day_of_week
+
+```
+Result:
+
+| num_of_member | num_of_casuals | num_of_users | day_of_week |
+|---------------|----------------|--------------|-------------|
+| 314340        | 161531         | 475871       | Wednesday   |
+| 331709        | 349163         | 680872       | Saturday    |
+| 279841        | 158675         | 438516       | Monday      |
+| 275506        | 276480         | 551986       | Sunday      |
+| 324555        | 220179         | 544734       | Friday      |
+| 312168        | 169581         | 481749       | Thursday    |
+| 299961        | 156905         | 456866       | Tuesday     |
+
+
+
+```TSQL
+
+--Calculating Average Ride Length for Each User Type and Creating View to store data for further Data Visualization
+
+
+Create View avg_ride_length AS
+SELECT member_casual AS user_type, AVG(ride_length)AS avg_ride_length
+From [dbo].[all_data_202004_202104]
+Group BY member_casual
+```
+
+Result:
+| user_type | avg_ride_length|
+|-----------|-------------|
+| member    | 15.61073206 |
+| casual    | 36.572335   |
+
+```TSQL
+
+-- Creating temporary tables exclusively for Casual Users and Members
+
+
+CREATE TABLE #member_table (
+ride_id nvarchar(50),
+rideable_type nvarchar(50),
+member_casual nvarchar(50),
+ride_length int,
+day_of_week nvarchar(50),
+month_m nvarchar(50),
+year_y int )
+
+INSERT INTO #member_table (ride_id, rideable_type, member_casual, ride_length, day_of_week, month_m, year_y)
+(Select ride_id, rideable_type, member_casual, ride_length, day_of_week, month_m, year_y
+From [dbo].[all_data_202004_202104]
+Where member_casual = 'member')
+
+CREATE TABLE #casual_table (
+ride_id nvarchar(50),
+rideable_type nvarchar(50),
+member_casual nvarchar(50),
+ride_length int,
+day_of_week nvarchar(50),
+month_m nvarchar(50),
+year_y int )
+
+INSERT INTO #casual_table (ride_id, rideable_type, member_casual, ride_length, day_of_week, month_m, year_y)
+(Select ride_id, rideable_type, member_casual, ride_length, day_of_week, month_m, year_y
+From [dbo].[all_data_202004_202104]
+Where member_casual = 'casual')
+
+Select *
+From #casual_table
+
+Select *
+From #member_table
+
+
+-- Calculating User Traffic Every Month Since Startup
+
+
+Select month_int AS Month_Num,
+month_m AS Month_Name, 
+year_y AS Year_Y,
+Count(case when member_casual = 'member' then 1 else NULL END) AS num_of_member,
+Count(case when member_casual = 'casual' then 1 else NULL END) AS num_of_casual,
+Count(member_casual) AS total_num_of_users
+From [dbo].[all_data_202004_202104]
+Group BY year_y, month_int, month_m
+ORDER BY year_y, month_int, month_m
+```
+
+Result:
+| Month_Num | Month_Name | Year_y | num_of_members | num_of_casuals | total_num_of_users |
+|-----------|------------|------|---------------|---------------|-----------|
+| 4         | April      | 2020 | 60522         | 23403         | 83925     |
+| 5         | May        | 2020 | 112027        | 86203         | 198230    |
+| 6         | June       | 2020 | 185999        | 153314        | 339313    |
+| 7         | July       | 2020 | 277761        | 266506        | 544267    |
+| 8         | August     | 2020 | 322695        | 281742        | 604437    |
+| 9         | September  | 2020 | 286276        | 219083        | 505359    |
+| 10        | October    | 2020 | 221721        | 129676        | 351397    |
+| 11        | November   | 2020 | 154489        | 77904         | 232393    |
+| 12        | December   | 2020 | 92279         | 26266         | 118545    |
+| 1         | January    | 2021 | 71659         | 15794         | 87453     |
+| 2         | February   | 2021 | 35763         | 9059          | 44822     |
+| 3         | March      | 2021 | 133645        | 78316         | 211961    |
+| 4         | April      | 2021 | 183244        | 125248        | 308492    |
+
+
+```TSQL
+-- Calculating Daily Traffic Since Startup 
+
+
+Select 
+Count(case when member_casual = 'member' then 1 else NULL END) AS num_of_members,
+Count(case when member_casual = 'casual' then 1 else NULL END) AS num_of_casual,
+Count(*) AS num_of_users,
+date_yyyy_mm_dd AS date_d
+From [dbo].[all_data_202004_202104]
+Group BY date_yyyy_mm_dd
+ORDER BY date_yyyy_mm_dd
+
+```
+
+```TSQL
+-- Calculating User Traffic Hour Wise
+
+
+Alter Table [dbo].[all_data_202004_202104]
+ADD hour_of_day int
+
+UPDATE [dbo].[all_data_202004_202104]
+SET hour_of_day = DATEPART(hour, started_at)
+
+Select
+hour_of_day AS Hour_of_day,
+Count(case when member_casual = 'member' then 1 else NULL END) AS num_of_members,
+Count(case when member_casual = 'casual' then 1 else NULL END) AS num_of_casual,
+Count(*) AS num_of_users
+From [dbo].[all_data_202004_202104]
+Group By Hour_Of_Day
+Order By Hour_Of_Day
+```
+
+Result:
+| Hour_of_day | num_of_members | num_of_casuals | num_of_users |
+|-------------|----------------|----------------|-----------|
+| 0           | 12656          | 23645          | 36301     |
+| 1           | 7144           | 14733          | 21877     |
+| 2           | 3679           | 7842           | 11521     |
+| 3           | 2305           | 4159           | 6464      |
+| 4           | 3745           | 3438           | 7183      |
+| 5           | 18302          | 5496           | 23798     |
+| 6           | 59197          | 13207          | 72404     |
+| 7           | 99943          | 23661          | 123604    |
+| 8           | 108092         | 32693          | 140785    |
+| 9           | 90665          | 41789          | 132454    |
+| 10          | 95594          | 60333          | 155927    |
+| 11          | 119169         | 83513          | 202682    |
+| 12          | 140760         | 102388         | 243148    |
+| 13          | 139621         | 111509         | 251130    |
+| 14          | 139825         | 117972         | 257797    |
+| 15          | 155960         | 124557         | 280517    |
+| 16          | 187856         | 132564         | 320420    |
+| 17          | 227149         | 148776         | 375925    |
+| 18          | 197734         | 134120         | 331854    |
+| 19          | 136824         | 101926         | 238750    |
+| 20          | 82888          | 70519          | 153407    |
+| 21          | 49895          | 51397          | 101292    |
+| 22          | 35195          | 45692          | 80887     |
+| 23          | 23882          | 36585          | 60467     |
+
+
+```TSQL
+--Calculating Most Popular Stations for Casual Users, (limiting results to top 20 station)
+
+
+Select
+TOP 20 start_station_name AS Station_name,
+Count(case when member_casual = 'casual' then 1 else NULL END) AS num_of_casual
+From [dbo].[all_data_202004_202104]
+Group By start_station_name
+Order By num_of_casual DESC
+
+```
+
+Result: 
+| station_name                 | num_of_casuals |
+|------------------------------|---------------|
+| Streeter Dr & Grand Ave      | 28344         |
+| Lake Shore Dr & Monroe St    | 23381         |
+| Millennium Park              | 21444         |
+| Theater on the Lake          | 16151         |
+| Michigan Ave & Oak St        | 15222         |
+| Indiana Ave & Roosevelt Rd   | 14708         |
+| Lake Shore Dr & North Blvd   | 14483         |
+| Clark St & Elm St            | 12828         |
+| Michigan Ave & Lake St       | 12760         |
+| Michigan Ave & Washington St | 11657         |
+| Shedd Aquarium               | 11148         |
+| Clark St & Lincoln Ave       | 11092         |
+| Buckingham Fountain          | 10989         |
+| Wells St & Concord Ln        | 10927         |
+| Clark St & Armitage Ave      | 10687         |
+| Wabash Ave & Grand Ave       | 10610         |
+| Michigan Ave & 8th St        | 10504         |
+| Columbus Dr & Randolph St    | 10338         |
+| Wells St & Elm St            | 10067         |
+| Fairbanks Ct & Grand Ave     | 9675          |
+
 
 
 
