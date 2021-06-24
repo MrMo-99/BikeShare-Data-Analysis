@@ -508,3 +508,23 @@ The graph depicts that irrespective of the user type, the usage of their bikes a
 ![Monthly Traffic](https://user-images.githubusercontent.com/83900526/123247143-3161a380-d504-11eb-8cb9-d4e69a71b35a.png)
 
 
+**Most Popular Stations for Casual Users**
+
+Top 20 most popular stations for casual users.
+
+![Most Popular Stations for Casuals](https://user-images.githubusercontent.com/83900526/123248777-f1032500-d505-11eb-92d8-8ed2f784613e.png)
+
+**Tableau Dashboard**
+
+Visualizations built in a dashboard. 
+
+![BikeShare Analysis Dashboard](https://user-images.githubusercontent.com/83900526/123249276-6969e600-d506-11eb-8ecd-9619fb564647.png)
+
+___
+
+##Conclusion
+
+isdbjfe
+
+
+
