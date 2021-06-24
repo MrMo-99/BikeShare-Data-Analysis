@@ -535,7 +535,7 @@ In order to design new marketing strategies to better focus on and suit the casu
 * Implement advertising annual memberships prices more using billboards/posters near the top 20 most popular stations for casual users.
 * Provide a limited discount on annual memberships purchased during the months of lowest traffic to increase rider usage in these months.
 * Have frequent advertisements on social media and television during peak hours and peak months, since that is when most people have a thought about riding bikes.
-* Start provide free ride minutes for every minute passed after using the bike for 30 minutes, where the free minutes can **ONLY** be redeemed on weekdays to help promote rider usage during weekdays. 
+* Start provide free ride minutes for every minute passed after 30 minutes of usage, where the free minutes can **ONLY** be redeemed on weekdays to help promote rider usage during weekdays. 
 
 
 
