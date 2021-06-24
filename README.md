@@ -250,9 +250,6 @@ From [dbo].[all_data_202004_202104]
 ___
 
 
-## Analyzing Data
-
-Here, I will be calculating fields and creating multiple queries to help find trends and patterns to better analyze the data and find what story the data has to offer.
 
 
 ```TSQL
@@ -473,10 +470,41 @@ Result:
 | Wells St & Elm St            | 10067         |
 | Fairbanks Ct & Grand Ave     | 9675          |
 
+___
 
 
+## Visualizing Data
+
+In this phase, we will be visualizing the data analyzed and tables created using Tableau Public.
+
+For the interactive version, [Click here](https://public.tableau.com/app/profile/mohammed.amja5151/viz/BikeShareAnalysisVisualized/BikeShareAnalysisVisualized)
+
+**Average Ride Duration:**
 
 
+From inferring to the figure shown below. We can conclude that casual members on average tend to ride bikes for a longer duration of time than annual members.
 
+
+![Avg Ride Duration](https://user-images.githubusercontent.com/83900526/123244664-c31be180-d501-11eb-9e92-9929671ecc17.png)
+
+**Users Per Day Of the Week:**
+
+The data suggests that casual users are more inclined to use the bikes on a weekend, while members tend to use them more on weekdays.
+
+![Users Per Day of Week](https://user-images.githubusercontent.com/83900526/123246014-fe6ae000-d502-11eb-891e-30aa892b178f.png)
+
+
+**Hourly Traffic Analysis of Users**
+
+Although both groups seem to prefer evening rides, from **3:00PM - 7:00PM**, annual members also seem to have higher usage in the morning from **6:00AM - 9:00AM**.
+
+![Hourly Traffic](https://user-images.githubusercontent.com/83900526/123246956-ff504180-d503-11eb-8dac-58be3478bf38.png)
+
+
+**Monthly User Traffic**
+
+The graph depicts that irrespective of the user type, the usage of their bikes are highest in the months **June - October**. While lowest traffic occurs from **November - March**.
+
+![Monthly Traffic](https://user-images.githubusercontent.com/83900526/123247143-3161a380-d504-11eb-8cb9-d4e69a71b35a.png)
 
 
