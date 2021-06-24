@@ -31,6 +31,11 @@ Or you could access and download the data from this repository named as "Raw Dat
 
 I am using Microsoft SQL Server Management Studio in this part of the project to help process and analyze the datasets.
 
+First make sure to import all of the dataset as a .csv file to the database server.
+Check and verify if the data types of each of the columns in each dataset is same to merge them all together.
+
+**Note: The start_station_id column of dataset from Dec 2020 to April 2020 contains string values**
+
 ```TSQL
 -- Creating a table to merge 13 datasets into one table for better usability
 
@@ -94,7 +99,8 @@ From CaseStudyBikeShare.dbo.[202104-divvy-tripdata])
 ```
 
 ```TSQL
- -- Forgot to include station names, So added a new column and used JOIN to include the station names, using ride_id as key
+ -- Forgot to include station names, So added a new column and used JOIN to include the station names,
+    using ride_id as key
 
 
 ALTER TABLE [dbo].[all_data_202004_202104]
@@ -166,6 +172,12 @@ From [CaseStudyBikeShare].[dbo].[202104-divvy-tripdata] thr
 INNER JOIN [dbo].[all_data_202004_202104] org ON org.ride_id = thr.ride_id
 
 ```
+
+
+## Processing and Analysis of Data
+
+
+
 
 
 
