@@ -227,7 +227,8 @@ SET date_yyyy_mm_dd = CAST(started_at AS date)
 
 ```TSQL
 
--- Deleted rows where (NULL values), (ride length = 0), (ride length < 0), (ride_length > 1440 mins) for accurate analysis
+/* Deleted rows where (NULL values), (ride length = 0), (ride length < 0), (ride_length > 1440 mins)
+   for accurate analysis */
 
 
 DELETE FROM [dbo].[all_data_202004_202104]
@@ -253,7 +254,8 @@ ___
 
 
 ```TSQL
--- Calculating Number of Riders Each Day by User Type and Creating View to store date for Further Visualization 
+/* Calculating Number of Riders Each Day by User Type and Creating View to store date
+   for Further Visualization */
 
 
 Create View users_per_day AS
@@ -282,7 +284,8 @@ Result:
 
 ```TSQL
 
---Calculating Average Ride Length for Each User Type and Creating View to store data for further Data Visualization
+/* Calculating Average Ride Length for Each User Type and Creating View to store data 
+   for further Data Visualization */
 
 
 Create View avg_ride_length AS
@@ -311,7 +314,9 @@ day_of_week nvarchar(50),
 month_m nvarchar(50),
 year_y int )
 
-INSERT INTO #member_table (ride_id, rideable_type, member_casual, ride_length, day_of_week, month_m, year_y)
+INSERT INTO #member_table (ride_id, rideable_type, member_casual, ride_length,
+ day_of_week, month_m, year_y)
+
 (Select ride_id, rideable_type, member_casual, ride_length, day_of_week, month_m, year_y
 From [dbo].[all_data_202004_202104]
 Where member_casual = 'member')
@@ -325,7 +330,9 @@ day_of_week nvarchar(50),
 month_m nvarchar(50),
 year_y int )
 
-INSERT INTO #casual_table (ride_id, rideable_type, member_casual, ride_length, day_of_week, month_m, year_y)
+INSERT INTO #casual_table (ride_id, rideable_type, member_casual, ride_length, day_of_week,
+ month_m, year_y)
+
 (Select ride_id, rideable_type, member_casual, ride_length, day_of_week, month_m, year_y
 From [dbo].[all_data_202004_202104]
 Where member_casual = 'casual')
