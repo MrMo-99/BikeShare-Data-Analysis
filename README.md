@@ -177,7 +177,7 @@ INNER JOIN [dbo].[all_data_202004_202104] org ON org.ride_id = thr.ride_id
 ___
 
 
-## Processing of Data
+## Processing and Analysis of Data
 
 Here, I will be transforming and organizing data by adding new columns, extracting information and removing bad data and duplicates.
 
