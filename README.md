@@ -3,6 +3,7 @@
 #### Date: 23/06/2021
 
 *Note: Please refer to the files in this repository to find all of the data/code/graphs/tables found in this report and much more.*
+*Tableau Visualizations: [Click here](https://public.tableau.com/app/profile/mohammed.amja5151/viz/BikeShareAnalysisVisualized/BikeShareAnalysisVisualized)
 ___
 
 ## Introduction
